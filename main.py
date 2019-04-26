@@ -5,6 +5,8 @@ import pdb
 from PIL import Image
 from time import sleep
 
+from algorithms.geekouts import foo
+
 
 def latest_filename(path=False):
     latest_fh = sorted(os.listdir('./images'))[-1]
@@ -43,6 +45,9 @@ def jpeg_resize(fh):
 def decay(fh):
     jpeg_resave(fh)
     #jpeg_resize(fh)
+
+foo()
+1/0
 
 while True:
     fh = latest_filename(path=True)
