@@ -1,18 +1,21 @@
 # Reference: https://subscription.packtpub.com/book/application_development/9781785283932/2/ch02lvl1sec25/creating-a-vignette-filter
 import cv2
 import numpy as np
+from utils import next_filename
+
 
 def foo():
     print('hello this is from geekouts central')
 
-
-def vignette():
-    img = cv2.imread('input.jpg')
+def vignette(fh, iteration):
+    img = cv2.imread(fh)
+    next_version = next_filename()
     rows, cols = img.shape[:2]
 
     # generating vignette mask using Gaussian kernels
-    kernel_x = cv2.getGaussianKernel(cols, 200)
-    kernel_y = cv2.getGaussianKernel(rows, 200)
+    print(rows)
+    kernel_x = cv2.getGaussianKernel(cols, cols * 0.5)
+    kernel_y = cv2.getGaussianKernel(rows, rows * 0.5)
     kernel = kernel_y * kernel_x.T
     mask = 255 * kernel / np.linalg.norm(kernel)
     output = np.copy(img)
@@ -21,6 +24,4 @@ def vignette():
     for i in range(3):
         output[:,:,i] = output[:,:,i] * mask
 
-        cv2.imshow('Original', img)
-        cv2.imshow('Vignette', output)
-        cv2.waitKey(0)
+    cv2.imwrite(next_version, output)

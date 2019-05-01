@@ -1,58 +1,25 @@
 import os
-import re
+import subprocess
 import pdb
 
-from PIL import Image
 from time import sleep
+from sauces.utils import latest_filename
+from sauces.ketchup import jpeg_resave, jpeg_resize
+from sauces.mustard import vignette
 
-from algorithms.geekouts import foo
 
+DETACHED_PROCESS = 0x00000008
 
-def latest_filename(path=False):
-    latest_fh = sorted(os.listdir('./images'))[-1]
-    print(latest_fh)
-    return "images/"+latest_fh if path else latest_fh
-
-def next_name():
-    fh = latest_filename()
-    regex = re.compile('test-(\d{5}).jpg')
-    current_version = int(regex.findall(fh)[0])
-    next_version = format(current_version+1, '05')
-
-    return 'images/test-' + next_version + '.jpg'
-
-# this doesn't seem to work beyond a certain point
-def jpeg_resave(fh):
-    img = Image.open(fh)
-    new_fh = next_name()
-
-    img.save(new_fh, optimize=True, quality=1)
-
-def jpeg_resize(fh):
-    img = Image.open(fh)
-    new_fh = next_name()
-    tmp_fh = 'images/temp.jpg'
-
-    img.resize((1730/4, 1228/4))
-    img.save(tmp_fh, quality=50)
-
-    down_image = Image.open(tmp_fh)
-    down_image.resize((1730, 1228))
-
-    down_image.save(new_fh, optimize=True, quality=50)
-    os.remove(tmp_fh)
-
-def decay(fh):
-    jpeg_resave(fh)
-    #jpeg_resize(fh)
-
-foo()
-1/0
-
+i = 0
 while True:
+    i = i + 1
     fh = latest_filename(path=True)
 
-    #os.system('fbi -a --noverbose %s' % fh)
-    #sleep(.02)
+    cmd = 'fbi -a --noverbose %s' % fh
+    proc = subprocess.Popen(cmd, shell=True)
 
-    decay(latest_filename(path=True))
+    sleep(.5)
+    proc.terminate()
+
+    vignette('images/test-00001.jpg', i)
+
